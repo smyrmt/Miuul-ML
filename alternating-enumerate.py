@@ -28,3 +28,16 @@ def change_str(arg):
 str = "miuul"
 change_str(str)
 """
+
+#divide students
+def divide(arg):
+    a=[]
+    b=[]
+    for i, v in enumerate(arg):
+        if i%2==0:
+            a.append(v)
+        else:
+            b.append(v)
+    return [a,b]
+str = ["ali","veli","ayşe"]
+print(divide(str))
