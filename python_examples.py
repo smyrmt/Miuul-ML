@@ -48,3 +48,19 @@ df.columns
 
 #Görev 7: ListComprehension yapısıkullanarakcar_crashesverisindeisminde"no" barındırmayandeğişkenlerinisimlerininsonuna"FLAG" yazınız.
 
+import seaborn as sns
+
+df = sns.load_dataset("car_crashes")
+df.columns
+[i.upper() + "_FLAG" if ("no" in i) == False else i.upper() for i in df.columns]
+
+#Görev 8: ListComprehension yapısıkullanarakaşağıdaverilendeğişkenisimlerindenFARKLI olandeğişkenlerinisimleriniseçinizveyeni birdataframeoluşturunuz
+
+import seaborn as sns
+
+df = sns.load_dataset("car_crashes")
+ogr_list = ["abbrev", "no_previous"]
+new_cols = []
+[new_cols.append(i) for i in df.columns if (i in ogr_list) != True]
+new_df = df[new_cols]
+new_df
