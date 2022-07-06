@@ -39,4 +39,12 @@ def divide(list):
 list = range(10)
 divide(list)
 
+#Görev 6: ListComprehension yapısıkullanarakcar_crashesverisindekinumeric değişkenlerinisimlerinibüyükharfeçevirinizvebaşınaNUM ekleyiniz.
+import seaborn as sns
+df = sns.load_dataset("car_crashes")
+df.columns
+["NUM_" + i.upper() if i != "abbrev" else i.upper() for i in df.columns]
+
+
+#Görev 7: ListComprehension yapısıkullanarakcar_crashesverisindeisminde"no" barındırmayandeğişkenlerinisimlerininsonuna"FLAG" yazınız.
 
