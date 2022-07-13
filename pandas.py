@@ -62,3 +62,22 @@ df.pivot_table("survived", "sex", ["new_age", "class"])
 ##püf nokta##
 #çıktılarda tüm satırların yan yana gelmesi için
 pd.set_option("display.width",500)
+
+######################
+#apply&lambda
+#apply: fonksiyon kullanımı için
+#lambda: kullan at fonksiyon
+######################
+df["age2"] = df["age"]*2
+df["age3"] = df["age"]*5
+(df["age"]/10).head()
+(df["age2"]/10).head()
+(df["age3"]/10).head()
+
+#"age" değeri içeren etiketlerin verilerini 10'a bölme
+#geleneksel yöntem
+for col in df.columns:
+    if "age" in col:
+        df[col] = df[col]/10
+#pratik yöntem
+df.loc[:, df.columns.str.contains("age")].apply(lambda x: x/10).head()
