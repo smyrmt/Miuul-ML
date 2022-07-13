@@ -81,3 +81,23 @@ for col in df.columns:
         df[col] = df[col]/10
 #pratik yöntem
 df.loc[:, df.columns.str.contains("age")].apply(lambda x: x/10).head()
+
+#standartlaştırma fonksiyonu kullanım örneği
+def standart_scaler(col_name):
+    return(col_name - col_name.mean()) / col_name.std()
+df.loc[:, df.columns.str.contains("age")] = df.loc[:, df.columns.str.contains("age")].apply(standart_scaler)
+######################
+##concat ile birleştirme##
+#iki farklı data frame oluşturalım
+m = np.random.randint(1, 30, size=(5, 3))
+df1 = pd.DataFrame(m,columns=["var1", "var2", "var3"])
+df2 = df1 + 99
+#daha sora bu iki farklı dataframe'i birleştirelim
+pd.concat([df1,df2], ignore_index=1)    #index değerlerinin yeniden oluşturulması için ignore_index=1 yapılır
+##merge ile birleştirme##
+df1 = pd.DataFrame({"emp":["ali", "veli", "ayla"],
+                    "group": ["dr", "eng", "hr"]})
+df2 = pd.DataFrame({"emp":["ali", "veli", "ayla"],
+                    "start_date": [2010, 2009, 2014]})
+pd.merge(df1, df2, on="emp")    #otomatik olarak emp üzerinden birleştirme yapılır. farklı bir etiket üzerinden birleştirme yapabilmek için on="" kullanılır.
+
