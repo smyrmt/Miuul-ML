@@ -11,6 +11,8 @@ df.head()
 ######################
 df["sex"].value_counts().plot(kind="bar")
 plt.show()
+#seaborn ile kullanımı
+sns.countplot(x=df["sex"], data=df)
 
 ######################
 #sayısal değişken görselleştirme
@@ -19,3 +21,5 @@ plt.hist(df["age"])
 plt.show()
 plt.boxplot(df["fare"])
 plt.show()
+#seaborn ile kullanım
+sns.boxplot(x=df["total_bill"])
