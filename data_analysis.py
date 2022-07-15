@@ -53,4 +53,15 @@ cat_cols = cat_cols + num_but_cat
 
 [col for col in df.columns if col not in cat_cols]  #kategorik olmayan değişkenleri verir
 
+#girilen değişkenin toplam sayısı ve tüm dataframe içindeki oranını veren fonksiyon
+def cat_summary(dataframe, col_name):
+    print(pd.DataFrame({col_name: dataframe[col_name].value_counts(),
+                        "Ratio": 100 * dataframe[col_name].value_counts() / len(dataframe)}))
+    print("###########################################################")
+
+#otomatik olarak tüm değişkenler için fonksiyonun uygulanması
+for col in cat_cols:
+    cat_summary(df,col)
+    
 ######################### Kategorik Değişken Analizi II ########################################
+
