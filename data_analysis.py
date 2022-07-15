@@ -81,6 +81,12 @@ for col in cat_cols:
     cat_summary(df, col, plot=True)
     
 ########################## Sayısal Değişken Analizi  ########################################
+
+df[["age", "fare"]].describe().T    #sayısal değişkenler için özet bilgisini verir
+
+num_cols = [col for col in df.columns if df[col].dtypes in ["float","int"]] #sayısal değişkenlerin tümünü verir
+num_cols = [col for col in num_cols if col not in cat_cols] #sayısal değişkenlerden gerçekte kategorik olanlarını ayrıştırarak gerçek sayısal değişkenleri verir
+
 def num_summary(dataframe, num_col, plot=False):
     quantiles = [0.25, 0.50, 0.75, 1]
     print(dataframe[num_col].describe().T)
