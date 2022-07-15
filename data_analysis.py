@@ -99,6 +99,37 @@ def num_summary(dataframe, num_col, plot=False):
 
 num_summary(df, "fare", True)
 
-########################## Sayısal Değişken Analizi  ########################################
-    
+########################## Değişkenlerin Yakalanması  ########################################
+#docstring
+
+def grab_col_names(dataframe, cat_th=10, car_th=20):
+    """
+    Veri setindeki kategorik, numerik ve kategorik fakat kardinal değişkenlerin isimlerini verir.
+
+    Parameters
+    ----------
+    dataframe: dataframe
+        değişken isimleri alınmak istenen dataframe'dir.
+    cat_th: int, float
+        numerik fakat kategorik olan değişkenler için sınıf eşik değeri
+    car_th: int, float
+        kategorik fakat kardinal değişkenler için sınıf eşik değeri
+
+    Returns
+    -------
+    cat_cols: list
+        kategorik değişken listesi
+    num_cols: list
+        numerik değişken listesi
+    cat_but_car: list
+        kategorik görünümlü kardinal değişken listesi
+
+    Notes
+    ------
+    cat_cols + num_cols + cat_but_car = toplam değişken sayısı
+    num_but_cat cat_cols'un içerisinde.
+
+    """
+
+help(grab_col_names)
     
