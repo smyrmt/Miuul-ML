@@ -161,3 +161,18 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
     return cat_cols, num_cols, cat_but_car
 
 grab_col_names(df)
+
+#############################hedef değişkenin kategorik değişkenler ile analizi
+def target_summary_with_cat(dataframe, target, cat_col):
+    print(pd.DataFrame({"Target Mean": dataframe.groupby(cat_col)[target].mean()}))
+
+for col in cat_cols:
+    target_summary_with_cat(df, "survived", col)
+
+##############################hedef değişkenin sayısal değişkenler ile analizi
+def target_summary_with_num(dataframe, target, num_col):
+    print(dataframe.groupby(target).agg({num_col:"mean"}), end="\n")
+
+for col in num_cols:
+    target_summary_with_num(df, "survived", col)
+
