@@ -33,22 +33,34 @@ df.drop("who", axis=1)
 #görev13: deck değikenindeki boş değerleri deck değişkenin en çok tekrar eden değeri (mode) ile doldurunuz
 
 #görev14: age değikenindeki boş değerleri age değişkenin medyanı ile doldurunuz
+
 #görev15:  survived değişkeninin pclass ve cinsiyet değişkenleri kırılımınında sum, count, mean değerlerini bulunuz
 df.groupby(["pclass", "sex"]).agg({"survived": ["sum", "mean", "count"]})
-#görev16: 30 yaşın altında olanlar 1, 30'a eşit ve üstünde olanlara 0 verecek bir fonksiyon yazın. Yazdığınız fonksiyonu kullanarak titanik veri
-#setinde age_flag adında bir değişken oluşturunuz oluşturunuz. (apply ve lambda yapılarını kullanınız)
+#görev16: 
+"""30 yaşın altında olanlar 1, 30'a eşit ve üstünde olanlara 0 verecek bir fonksiyon yazın. Yazdığınız fonksiyonu kullanarak titanik veri
+setinde age_flag adında bir değişken oluşturunuz oluşturunuz. (apply ve lambda yapılarını kullanınız)"""
 
 #görev17: Seaborn kütüphanesi içerisinden Tips veri setini tanımlayınız
 tips = sns.load_dataset("tips")
 #görev18: Time değişkeninin kategorilerine (Dinner, Lunch) göre total_bill değerinin sum, min, max ve mean değerlerini bulunuz
 tips.info()
+tips.head()
 tips["time"].value_counts()
 tips.groupby(["time"]).agg({"total_bill": ["sum", "mean", "min", "max"]})
 #görev19:
 tips.groupby(["day", "time"]).agg({"total_bill": ["sum", "mean", "min", "max"]})
-#görev20:
-#görev21:
-#görev22:
+#görev20: Lunch zamanına ve kadın müşterilere ait total_bill ve tip değerlerinin day'e göre sum, min, max ve mean değerlerini bulunuz
+
+#görev21: size'i 3'ten küçük, total_bill'i 10'dan büyük olan siparişlerin ortalaması nedir? (loc kullanınız)
+
+#görev22: total_bill_tip_sum adında yeni bir değişken oluşturunuz. Her bir müşterinin ödediği totalbill ve tip in toplamını versin
+
 #görev23:
-#görev24:
-#görev25:
+"""Total_bill değişkeninin kadın ve erkek için ayrı ayrı ortalamasını bulunuz. Bulduğunuz ortalamaların altında olanlara 0, üstünde ve eşit
+olanlara 1 verildiği yeni bir total_bill_flag değişkeni oluşturunuz.
+Kadınlar için Female olanlarının ortalamaları, erkekler için ise Male olanların ortalamaları dikkate alınacktır. Parametre olarak cinsiyet ve total_bill
+alan bir fonksiyon yazarak başlayınız. (If-else koşulları içerecek)"""
+
+#görev24: total_bill_flag değişkenini kullanarak cinsiyetlere göre ortalamanın altında ve üstünde olanların sayısını gözlemleyiniz
+
+#görev25: Veriyi total_bill_tip_sum değişkenine göre büyükten küçüğe sıralayınız ve ilk 30 kişiyi yeni bir dataframe'e atayınız
