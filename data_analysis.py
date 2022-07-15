@@ -79,3 +79,20 @@ for col in cat_cols:
         df[col] = df[col].astype(int)
 
     cat_summary(df, col, plot=True)
+    
+########################## Sayısal Değişken Analizi  ########################################
+def num_summary(dataframe, num_col, plot=False):
+    quantiles = [0.25, 0.50, 0.75, 1]
+    print(dataframe[num_col].describe().T)
+    if plot:
+        dataframe[num_col].hist()
+        plt.xlabel(num_col)
+        plt.title(num_col)
+        plt.show(block=True)
+
+
+num_summary(df, "fare", True)
+
+########################## Sayısal Değişken Analizi  ########################################
+    
+    
