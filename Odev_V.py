@@ -19,13 +19,13 @@ df[["pclass", "parch"]].nunique()
 df["embarked"].dtype
 df["embarked"].astype("category")
 #görev7
-df.loc[df["embarked"] =="C"]
+df[df["embarked"] =="C"]
 #görev8
-df.loc[df["embarked"] !="S"]
+df[df["embarked"] !="S"]
 #görev9: Yaşı 30 dan küçük ve kadın olan yolcuların tüm bilgilerini gösteriniz
-df.loc[(df["age"] < 30) & (df["sex"] == "female")]
+df[(df["age"] < 30) & (df["sex"] == "female")]
 #görev10: Fare'i 500'den büyük veya yaşı 70’den büyük yolcuların bilgilerini gösteriniz
-df.loc[(df["fare"] > 500) | (df["age"] > 70)]
+df[(df["fare"] > 500) | (df["age"] > 70)]
 #görev11: Her bir değişkendeki boş değerlerin toplamını bulunuz
 df.isnull().sum().sum()
 #görev12: who değişkenini dataframe’den çıkarınız
