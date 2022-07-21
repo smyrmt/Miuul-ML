@@ -72,3 +72,18 @@ def grab_col_names(dataframe, cat_th=10, car_th=10):
     return cat_cols, num_cols, cat_but_car
 
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
+
+def grab_outliers(dataframe, col_name, index=False):
+    low, up = outlier_thresholds(dataframe, col_name)
+    outliers = (dataframe[col_name] < low) | (dataframe[col_name] > up)
+    if dataframe[outliers].shape[0] > 10:
+        print(dataframe[outliers].head())
+    else:
+        print(outliers)
+
+    if index:
+        outlier_index = dataframe[outliers].index
+        return outlier_index
+
+
+grab_outliers(df, "Age", index=True)
