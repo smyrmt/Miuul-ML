@@ -87,3 +87,31 @@ def grab_outliers(dataframe, col_name, index=False):
 
 
 grab_outliers(df, "Age", index=True)
+
+########################################################################33
+def remove_outlier(dataframe, col_name):
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name)
+    df_without_outliers =dataframe[~((dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit))]
+    return df_without_outliers
+
+cat_cols, num_cols, cat_but_car = grab_col_names(df)
+num_cols = [col for col in num_cols if col not in "PassengerId"]
+df.shape
+
+for col in num_cols:
+    new_df =remove_outlier(df, col)
+
+df.shape[0] - new_df.shape[0]
+
+#baskılama yöntemi (silmek istemediğimiz durumlarda)
+def replace_with_thresholds(dataframe, var):
+    low_limit, up_limit = outlier_thresholds(dataframe, var)
+    dataframe.loc[(dataframe[var] < low_limit), var] = low_limit
+    dataframe.loc[(dataframe[var] > up_limit), var] = up_limit
+
+
+for col in num_cols:
+    print(col, check_outlier(df,col))
+
+for col in num_cols:
+    replace_with_thresholds(df, col)
