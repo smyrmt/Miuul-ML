@@ -50,3 +50,25 @@ def check_outlier(dataframe, col_name):
         return True
     else:
         return False
+
+
+def grab_col_names(dataframe, cat_th=10, car_th=10):
+
+    cat_cols = [col for col in dataframe.columns if dataframe[col].dtypes == "O"]
+    num_but_cat = [col for col in dataframe.columns if dataframe[col].nunique() < cat_th and dataframe[col].dtypes != "O"]
+    cat_but_car = [col for col in dataframe.columns if dataframe[col].nunique() > car_th and dataframe[col].dtypes == "O"]
+    cat_cols = cat_cols + num_but_cat #tüm kategorikler
+    cat_cols = [col for col in cat_cols if col not in cat_but_car]  #tüm kategoriklerden sahte kategorikleri çıkartarak gerçek kategorikler bulunur
+    #numerik veriler
+    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes != "O"]
+    num_cols = [col for col in num_cols if col not in num_but_cat]
+
+    print(f"Observation: {dataframe.shape[0]}")
+    print(f"Variables: {dataframe.shape[1]}")
+    print(f"Categorics: {len(cat_cols)}")
+    print(f"numerics: {len(num_cols)}")
+    print(f"cat but car: {len(cat_but_car)}")
+    print(f"num but cat: {len(num_but_cat)}")
+    return cat_cols, num_cols, cat_but_car
+
+cat_cols, num_cols, cat_but_car = grab_col_names(df)
