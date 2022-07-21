@@ -135,7 +135,7 @@ np.sort(df_scores)[0:5]
 
 scores = pd.DataFrame(np.sort(df_scores))
 scores.plot(stacked=True, xlim=[0, 50], style=".-")
-plt.show()
+plt.show(block=True)
 
 th = np.sort(df_scores)[3] #elbow yöntemine göre grafiğe de bakarak 3. indekse sahip değeri eşik değer olarak belirleyebiliriz
 df[df_scores < th] #negatif değerlerde olduğumuz için eşik değerden küçükler aykırıdır.
@@ -201,13 +201,13 @@ df.loc[df["Age"].isnull(), ["Age", "age_imputed_knn"]]
 #Eksik veri yapısının grafikler ile analiz edilmesi
 #####################################################
 msno.bar(df)
-plt.show()
+plt.show(block=True)
 
 msno.matrix(df)
-plt.show()
+plt.show(block=True)
 
 msno.heatmap(df)
-plt.show()
+plt.show(block=True)
 
 #####################################################
 # Eksik Değerlerin Bağımlı Değişken ile ilişkisinin incelenmesi
