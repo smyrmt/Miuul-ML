@@ -115,3 +115,31 @@ for col in num_cols:
 
 for col in num_cols:
     replace_with_thresholds(df, col)
+
+###########################################################
+# Çok değişkenli Aykırı Değer Analizi: Local Outlier Factor
+##########################################################
+df = sns.load_dataset("diamonds")
+df = df.select_dtypes(include={"float64", "int64"})
+df = df.dropna()
+df.head()
+
+for col in df.columns:
+    print(col, check_outlier(df, col))
+
+clf = LocalOutlierFactor(n_neighbors=20)
+clf.fit_predict(df)
+df_scores = clf.negative_outlier_factor_
+df_scores[0:5]
+np.sort(df_scores)[0:5]
+
+scores = pd.DataFrame(np.sort(df_scores))
+scores.plot(stacked=True, xlim=[0, 50], style=".-")
+plt.show()
+
+th = np.sort(df_scores)[3] #elbow yöntemine göre grafiğe de bakarak 3. indekse sahip değeri eşik değer olarak belirleyebiliriz
+df[df_scores < th] #negatif değerlerde olduğumuz için eşik değerden küçükler aykırıdır.
+
+df.describe([0.01, 0.05, 0.75, 0.90, 0.99]).T
+df[df_scores < th].drop(axis=0, labels=df[df_scores < th].index)
+
