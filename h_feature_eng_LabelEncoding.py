@@ -91,3 +91,52 @@ def rare_encoder(dataframe, rare_perc):
 
 new_df= rare_encoder(df, 0.01) #0.01 oranının altında kalan sınıfları birleştirir
 rare_analyser((new_df, "TARGET", cat_cols))
+
+
+###################################################
+# Özellik Ölçeklendirme
+###################################################
+################
+#Standart Scaler: z = (x-u) / s (ortalamayı çıkar standat sapmaya böll)
+################
+df = load()
+ss = StandardScaler()
+df["Age_standart_scaler"] = ss.fit_transform(df[["Age"]])
+df.head()
+
+################
+#Robust Scaler: medyanı çıkar iqr'a böll
+################
+rs = RobustScaler()
+df["Age_robust_scaler"] = rs.fit_transform(df[["Age"]])
+
+################
+#MinMax Scaler: verilen iki değer arasında değişken dönüşümü
+################
+mms = MinMaxScaler()
+df["Age_minmax_scaler"] = mms.fit_transform(df[["Age"]])
+df.describe().T
+
+age_cols = [col for col in df.columns if "Age" in col] #Age değişkenine ait verileri ve ölçeklendirme sonuçlarını almak için
+
+def num_summary(dataframe, num_col, plot=False):
+    quantiles = [0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.99]
+    print(dataframe[num_col].describe(quantiles).T)
+
+    if plot:
+        dataframe[num_col].hist(bins=20)
+        plt.xlabel(num_col)
+        plt.title(num_col)
+        plt.show(block=True)
+
+#Scaler değişse de değerlerde değişme olmadığını grafik üzerinde görüntüleyelim.
+#Veriler değişmez sadece ifade ediliş biçimleri değişir
+for col in age_cols:
+    num_summary(df,col,plot=True)
+
+
+####################
+#Num to Cat (Bining)
+####################
+df["Age_cut"] = pd.qcut(df["Age"], 5)
+df.head()
