@@ -40,6 +40,26 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
     print(f"num but cat: {len(num_but_cat)}")
     return cat_cols, num_cols, cat_but_car
 
+def outlier_thresholds(dataframe, col_name, q1=0.25, q3=0.75):
+    quartile1 = dataframe[col_name].quantile(q1)
+    quartile3 = dataframe[col_name].quantile(q3)
+    interquantile_range = quartile3 - quartile1
+    up_limit = quartile3 + 1.5 * interquantile_range
+    low_limit = quartile1 - 1.5 * interquantile_range
+    return low_limit, up_limit
+
+def check_outlier(dataframe, col_name):
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name)
+    if dataframe[(dataframe[col_name] > up_limit) | (dataframe[col_name] < low_limit)].any(axis=None):
+        return True
+    else:
+        return False
+    
+def replace_with_thresholds(dataframe, var):
+    low_limit, up_limit = outlier_thresholds(dataframe, var)
+    dataframe.loc[(dataframe[var] < low_limit), var] = low_limit
+    dataframe.loc[(dataframe[var] > up_limit), var] = up_limit
+
 #############################################################################################################################
 
 df = load()
@@ -80,3 +100,13 @@ df.head()
 df.shape
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
 num_cols = [col for col in num_cols if "PassengerId" not in col]
+
+######################################
+# 2. Outliers
+#####################################
+for col in num_cols:
+    print(col, check_outlier(df,col))
+for col in num_cols:
+    replace_with_thresholds(df,col)
+for col in num_cols:
+    print(col, check_outlier(df,col))
