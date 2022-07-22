@@ -170,3 +170,20 @@ df.loc[((df["SibSp"] + df["Parch"]) == 0), "New_Is_Alone"] = "YES" #ailesi varsa
 
 df.groupby("New_Is_Alone").agg({"Survived": "mean"})
 
+######################################
+# Text'ler üzerindern özellik türetme
+######################################
+
+df.head()
+###############
+# Letter Count
+df["New_Name_Count"] = df["Name"].str.len()
+
+###############
+# Word Count
+df["New_Name_Word_Count"] = df["Name"].apply(lambda x: len(str(x).split(" ")))
+
+###############
+# Özel yapıları yakalama
+df["New_Name_Dr"] = df["Name"].apply(lambda x: len([x for x in x.split() if x.startswith("Dr")]))
+df.groupby("New_Name_Dr").agg({"Survived": ["mean", "count"]})
