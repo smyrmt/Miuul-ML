@@ -148,3 +148,25 @@ df.head()
 #####################################################################################################################
 ############# FEATURE EXTRACTION ################
 #####################################################################################################################
+
+##################################
+# Binary Features
+##################################
+df = load()
+df.head()
+df["New_Cabin_Bool"] = df["Cabin"].notnull().astype("int") #Cabin etiketine ait veriler dolu ise 1 boş ise 0 yazdır
+df.groupby("New_Cabin_Bool").agg({"Survived": "mean"})
+
+from statsmodels.stats.proportion import proportions_ztest
+
+test_stat, pvalue = proportions_ztest(count=[df.loc[df["New_Cabin_Bool"] == 1, "Survived"].sum(), #kabin numarası olan hayatta kalan kaç kişi var
+                                            df.loc[df["New_Cabin_Bool"] == 0, "Survived"].sum()],
+                                      nobs=[df.loc[df["New_Cabin_Bool"] == 1, "Survived"].shape[0], #kabin numarası olan kaç kişi var
+                                            df.loc[df["New_Cabin_Bool"] == 0, "Survived"].shape[0]])
+print("Test Stat = %.4f, p-value = %.4f" % (test_stat, pvalue)) #p-value değerinin 0.5 ten küüçük olması iki değişken arasında fark olduğu anlamına gelir
+
+df.loc[((df["SibSp"] + df["Parch"]) > 0), "New_Is_Alone"] = "NO" #yalnız ise no yazdır
+df.loc[((df["SibSp"] + df["Parch"]) == 0), "New_Is_Alone"] = "YES" #ailesi varsa yes yazdır
+
+df.groupby("New_Is_Alone").agg({"Survived": "mean"})
+
