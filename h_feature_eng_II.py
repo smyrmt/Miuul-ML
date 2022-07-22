@@ -194,3 +194,23 @@ df.groupby("New_Name_Dr").agg({"Survived": ["mean", "count"]})
 df["New_Title"] = df.Name.str.extract(" ([A-Za-z]+)\.", expand=False) #boşlukla başlayıp nokta ile biten değerleri ayrı bir sütuna al
 df[["New_Title", "Survived", "Age"]].groupby(["New_Title"]).agg({"Survived": "mean", "Age": ["count", "mean"]})
 
+######################################
+# Data değişkenleri üretmek
+######################################
+
+dff = pd.read_csv("course_reviews.csv")
+dff.head()
+dff.info()
+
+dff["Timestamp"] = pd.to_datetime(dff["Timestamp"], format="%Y-%m-%d")
+
+#year
+dff["year"] = dff["Timestamp"].dt.year
+#month
+dff["month"] = dff["Timestamp"].dt.month
+#day
+dff["day"] = dff["Timestamp"].dt.day_name()
+#yıl farkı
+dff["year_diff"] = date.today().year - dff["Timestamp"].dt.year
+#iki tarih arasındaki ay farkı
+dff["month_diff"] = (date.today().year - dff["Timestamp"].dt.year) * 12 + (date.today().month - dff["Timestamp"].dt.month)
