@@ -187,3 +187,10 @@ df["New_Name_Word_Count"] = df["Name"].apply(lambda x: len(str(x).split(" ")))
 # Özel yapıları yakalama
 df["New_Name_Dr"] = df["Name"].apply(lambda x: len([x for x in x.split() if x.startswith("Dr")]))
 df.groupby("New_Name_Dr").agg({"Survived": ["mean", "count"]})
+
+######################################
+# Regex ile değişken türetme
+######################################
+df["New_Title"] = df.Name.str.extract(" ([A-Za-z]+)\.", expand=False) #boşlukla başlayıp nokta ile biten değerleri ayrı bir sütuna al
+df[["New_Title", "Survived", "Age"]].groupby(["New_Title"]).agg({"Survived": "mean", "Age": ["count", "mean"]})
+
