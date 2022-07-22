@@ -214,3 +214,20 @@ dff["day"] = dff["Timestamp"].dt.day_name()
 dff["year_diff"] = date.today().year - dff["Timestamp"].dt.year
 #iki tarih arasındaki ay farkı
 dff["month_diff"] = (date.today().year - dff["Timestamp"].dt.year) * 12 + (date.today().month - dff["Timestamp"].dt.month)
+
+######################################
+# Feature Interactions (Özellik etkileşimleri)
+######################################
+df["New_Age_Pclass"] = df["Age"] * df["Pclass"]
+df["New_Family_Size"] = df["SibSp"] + df["Parch"] + 1 #kendisi de dahil olmak üzere aile sayısı
+df.loc[(df["Sex"] == "male") & (df["Age"] <= 21), "New_Sex_Cat"] = "youngmale"
+df.loc[(df["Sex"] == "male") & ((df["Age"] > 21) & df["Age"] <= 50), "New_Sex_Cat"] = "maturemale"
+df.loc[(df["Sex"] == "male") & (df["Age"] > 50), "New_Sex_Cat"] = "seniormale"
+
+df.loc[(df["Sex"] == "female") & (df["Age"] <= 21), "New_Sex_Cat"] = "youngfemale"
+df.loc[(df["Sex"] == "female") & ((df["Age"] > 21) & df["Age"] <= 50), "New_Sex_Cat"] = "maturefemale"
+df.loc[(df["Sex"] == "female") & (df["Age"] > 50), "New_Sex_Cat"] = "seniorfemale"
+df.head()
+
+df.groupby("New_Sex_Cat")["Survived"].mean()
+
