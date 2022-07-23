@@ -59,6 +59,43 @@ def replace_with_thresholds(dataframe, var):
     low_limit, up_limit = outlier_thresholds(dataframe, var)
     dataframe.loc[(dataframe[var] < low_limit), var] = low_limit
     dataframe.loc[(dataframe[var] > up_limit), var] = up_limit
+    
+def missing_values(dataframe, na_name=False):
+    na_columns = [col for col in dataframe.columns if dataframe[col].isnull().sum() > 0]
+    n_miss = dataframe[na_columns].isnull().sum().sort_values(ascending=False)
+    ratio = (dataframe[na_columns].isnull().sum() / dataframe.shape[0] * 100).sort_values(ascending=False)
+    missing_df = pd.concat([n_miss, np.round(ratio, 2)], axis=1, keys=["n_miss", "ratio"])
+    print(missing_df, end="\n")
+    if na_name:
+        return na_columns
+    
+def label_encoder(dataframe, binary_col):
+    le = LabelEncoder()
+    dataframe[binary_col] = le.fit_transform(dataframe[binary_col])
+    return dataframe
+
+def rare_analyser(dataframe, target, cat_cols):
+    for col in cat_cols:
+        print(col, ":", len(dataframe[col].value_counts()))
+        print(pd.DataFrame({"COUNT": dataframe[col].value_counts(),
+                            "RATIO": dataframe[col].value_counts() / len(dataframe),
+                            "TARGET_MEAN": dataframe.groupby(col)[target].mean(),}), end="\n\n\n")
+        
+def rare_encoder(dataframe, rare_perc):
+    temp_df = dataframe.copy()
+
+    rare_col = [col for col in temp_df.columns if temp_df[col].dtypes == "O" and (temp_df[col].value_counts() / len(temp_df) < rare_perc).any(axis=None)]
+
+    for var in rare_col:
+        tmp = temp_df[var].value_counts() / len(temp_df)
+        rare_labels = tmp[tmp < rare_perc].index
+        temp_df[var] = np.where(temp_df[var].isin(rare_labels), "Rare", temp_df[var]) #rare_labels içindeyse "Rare" yaz değilse birşey yapma
+
+    return temp_df
+
+def one_hot_encoder(dataframe, cat_cols, drop_first=True):
+    dataframe = pd.get_dummies(dataframe, columns=cat_cols, drop_first=drop_first)
+    return dataframe
 
 #############################################################################################################################
 
@@ -138,4 +175,81 @@ df.loc[(df["Sex"] == "female") & (df["Age"] > 50), "New_Sex_Cat"] = "seniorfemal
 #Embark değişkenindeki eksikleri (2) doldurmak için
 df = df.apply(lambda x: x.fillna(x.mode()[0]) if (x.dtype == "O" and len(x.unique()) <= 10) else x, axis=0)
 
+# Not: ağaç yapılarında eksik değerleri doldurmaya gerek yok
 
+############################################
+# 4. Label Encoding
+############################################
+binary_cols = [col for col in df.columns if df[col].dtype not in ["int64", "int32", "float64"] and df[col].nunique() == 2]
+
+for col in binary_cols:
+    df = label_encoder(df, col)
+
+############################################
+# 5. Rare Encoding
+############################################
+rare_analyser(df, "Survived", cat_cols)
+
+df = rare_encoder(df, 0.01)
+df["New_Title"].value_counts()
+
+############################################
+# 6. One-hot Encoding
+############################################
+ohe_cols = [col for col in df.columns if  10>= df[col].nunique() > 2]
+df = one_hot_encoder(df, ohe_cols)
+df.head()
+df.shape
+
+cat_cols, num_cols, cat_but_car = grab_col_names(df)
+num_cols = [col for col in num_cols if "PassengerId" not in col]
+rare_analyser(df, "Survived", cat_cols) #one-hot encoding yapıldıktan sonra kullanışsız yeni sütunlar oluştu
+useless_cols = [col for col in df.columns if df[col].nunique() == 2 and (df[col].value_counts() / len(df) < 0.01).any(axis=None)]
+#bu kullanışsız verileri silmek istersek;
+#df.drop(useless_cols, axis=1, inplace=True)
+
+############################################
+# 7. Standart Scaler
+############################################
+scaler = StandardScaler()
+df[num_cols] = scaler.fit_transform(df[num_cols])
+df[num_cols].head()
+
+############################################
+# 8. Model
+############################################
+y = df["Survived"] #bağımlı değişken
+X = df.drop(["PassengerId", "Survived"], axis=1) #bağımsız değişkenler (survived ve passengerId dışındakiler
+X_train, X_test,y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=17)
+
+from sklearn.ensemble import  RandomForestClassifier
+rf_model = RandomForestClassifier(random_state=46).fit(X_train, y_train)
+y_pred = rf_model.predict(X_test)
+accuracy_score(y_pred, y_test)
+#doğruluk: 0.8059
+
+#Ham veriler üzerinden sınıflandırıcıyı çağırsaydık sonuç nasıl olurdu?
+dff = load()
+dff.dropna(inplace=True) #eksik değerler göz ardı edilmezse RF sınıflandırıcısı hata veriyor
+dff = pd.get_dummies(dff, columns=["Sex", "Embarked"], drop_first=True) #RF sınıflandırıcısı kategorik veri kabul etmiyor sayısala çevirmemiz gerekli
+y = dff["Survived"]
+X = dff.drop(["PassengerId", "Survived", "Name", "Ticket", "Cabin"], axis=1)
+X_train, X_test,y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=17)
+rf_model = RandomForestClassifier(random_state=46).fit(X_train, y_train)
+y_pred = rf_model.predict(X_test)
+accuracy_score(y_pred, y_test)
+# doğruluk: 0.7090
+
+#yeni oluşturduğumuz etiketlerin önemini gözlemleyelim
+def plot_importance(model, features, num=len(X), save=False):
+    feature_imp = pd.DataFrame({"Value": model.feature_importances_, "Feature": features.columns})
+    plt.figure(figsize=(10, 10))
+    sns.set(font_scale=1)
+    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value", ascending=0)[0:num])
+    plt.title("Features")
+    plt.tight_layout()
+    plt.show(block=1)
+    if save:
+        plt.savefig("importances.png")
+
+plot_importance(rf_model, X_train)
