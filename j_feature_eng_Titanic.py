@@ -110,3 +110,32 @@ for col in num_cols:
     replace_with_thresholds(df,col)
 for col in num_cols:
     print(col, check_outlier(df,col))
+
+####################################
+# 3. Missing Values
+###################################
+missing_values(df)
+df.drop("Cabin", inplace=True, axis=1) #Cabil_bool değişkeni oluşturduğumuz için "Cabin" değişkenini siliyoruz
+remove_cols = ["Ticket", "Name"]
+df.drop(remove_cols, inplace=True, axis=1)
+
+df["Age"] = df["Age"].fillna(df.groupby("New_Title")["Age"].transform("median")) # yaş değişkenindeki eksiklikler gider
+# yaş değişkeninden oluşturulan değişkenlerin tekrar oluşturulması gerekir
+#age_pclass
+df["New_Age_Pclass"] = df["Age"] * df["Pclass"]
+#age level
+df.loc[df["Age"] < 18, "New_Age_Cat"] = "young"
+df.loc[(df["Age"] >= 18) & (df["Age"] < 56), "New_Age_Cat"] = "mature"
+df.loc[df["Age"] >= 56, "New_Age_Cat"] = "senior"
+#Sex x Age
+df.loc[(df["Sex"] == "male") & (df["Age"] <= 21), "New_Sex_Cat"] = "youngmale"
+df.loc[(df["Sex"] == "male") & ((df["Age"] > 21) & df["Age"] <= 50), "New_Sex_Cat"] = "maturemale"
+df.loc[(df["Sex"] == "male") & (df["Age"] > 50), "New_Sex_Cat"] = "seniormale"
+df.loc[(df["Sex"] == "female") & (df["Age"] <= 21), "New_Sex_Cat"] = "youngfemale"
+df.loc[(df["Sex"] == "female") & ((df["Age"] > 21) & df["Age"] <= 50), "New_Sex_Cat"] = "maturefemale"
+df.loc[(df["Sex"] == "female") & (df["Age"] > 50), "New_Sex_Cat"] = "seniorfemale"
+
+#Embark değişkenindeki eksikleri (2) doldurmak için
+df = df.apply(lambda x: x.fillna(x.mode()[0]) if (x.dtype == "O" and len(x.unique()) <= 10) else x, axis=0)
+
+
