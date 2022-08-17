@@ -148,3 +148,35 @@ tree_graph(model=cart_final, col_names=X.columns, file_name="cart_final.png")
 #############################################
 tree_rules = export_text(cart_final, feature_names=list(X.columns))
 print(tree_rules)
+
+#############################################
+# Extracting Python codes of decission rules
+#############################################
+# pip install scikit-learn==0.23.1 (sorun çıkarsa bu kurulumu yapmalısın)
+# import sklearn
+# sklearn.__version__
+
+print(skompile(cart_final.predict).to("python/code"))
+# pip install sqlalchemy
+print(skompile(cart_model.predict).to("sqlalchemy/sqlite"))
+
+####################################################
+# Prediction using Python codes
+#############################################
+
+def predict_with_rules(x):
+    return() #return içine daha önceden bulduğumuz python kodlarını yazacağız
+
+x = [12, 13, 20, 23, 4, 55, 12, 7]
+predict_with_rules(x)
+
+####################################################
+# Saving and Loading Model
+#############################################
+# kaydetme
+joblib.dump(cart_final, "cart_final.pkl")
+# geri çağırma
+cart_model_from_disk = joblib.load("cart_final.pkl")
+x = [12, 13, 20, 23, 4, 55, 12, 7]
+cart_model_from_disk.predict(pd.DataFrame(x).T) #predict methodunu kullandığımız için dataframe'e çevirmemiz gerekiyor
+
